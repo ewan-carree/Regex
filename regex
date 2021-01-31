@@ -1,0 +1,65 @@
+#!/bin/bash
+
+kDATE="[0-9]{1,2} [a-zA-Zûé]{1,9} [0-9]{4} | [0-9]{1,2}[/\\. -]+[0-9]{1,2}[/\\. -]+[0-9]{4}"
+kEMAIL="[a-zA-Z0-9_.-]+@[a-z]+\.[a-z]+"
+kTELNUMBER="0[0-9][-. ]?([0-9]{2}[-. ]?){4}"
+
+read -t 30 -p "Please enter the method you want and the path to the file : " method pathToText
+
+if [ -z $method ]  || [ -z $pathToText ]
+then
+    echo "you didn't enter correct parameters"
+    exit 1
+fi
+
+if [ -e $pathToText ] && [ -f $pathToText ]
+then
+     > output.txt
+     text=$(cat $pathToText)
+else
+     echo "The file to read doesn't exist"
+     exit 1
+fi
+
+case $method in
+date)
+    while [ true ]; do
+        if [[ $text =~ $kDATE ]]
+        then
+            echo -e $BASH_REMATCH >> output.txt
+            text=${text/$BASH_REMATCH/"found"}
+        else
+            break
+        fi
+    done
+    ;;
+
+email)
+    while [ true ]; do
+        if [[ $text =~ $kEMAIL ]]
+        then
+            echo -e $BASH_REMATCH >> output.txt
+            text=${text/$BASH_REMATCH/"found"}
+        else
+            break
+        fi
+    done
+    ;;
+
+telnumber)
+    while [ true ]; do
+        if [[ $text =~ $kTELNUMBER ]]
+        then
+            echo -e $BASH_REMATCH >> output.txt
+            text=${text/$BASH_REMATCH/"found"}
+        else
+            break
+        fi
+    done
+    ;;
+
+*)
+    echo "you didn't enter correct parameters"
+    exit 1
+    ;;
+esac
